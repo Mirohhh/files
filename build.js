@@ -13,7 +13,7 @@ const path = require("path"); // path utilities: safely join/split file paths cr
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 const CONFIG = {
-  siteTitle: "Home", // shown in <title> tags and the nav bar
+  siteTitle: "Omar Shabana", // shown in <title> tags and the nav bar
   siteDescHeader: "Hi There! ... Who am I?",
   siteDescription:
     "My name is Omar. I'm a software engineer from Egypt. I write about software development and technology. My main interests are Web Development and Ml/AI.", // used in the homepage subtitle and RSS feed
@@ -594,7 +594,7 @@ function parseMarkdown(md) {
 // Returns the <nav> HTML used at the top of every page.
 function navHtml() {
   return `<nav>
-  <a class="site-title" href="/">${CONFIG.siteTitle}</a>
+  <a class="site-title" href="/">Home</a>
   <div class="nav-links">
     <a href="/feed.xml">RSS</a>
   </div>
