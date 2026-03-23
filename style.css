@@ -109,12 +109,12 @@ footer {
     justify-content: center;
     max-width: 680px;
     margin: auto auto 0;
-    /*padding-top: 2rem;*/
+    padding-top: 2rem;
     /*border-top: 1px solid var(--border);*/
     color: var(--muted);
     font-size: 0.85rem;
     font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    margin-top: 2rem;
+    /*margin-top: 2rem;*/
 }
 div.recent {
     display: flex;

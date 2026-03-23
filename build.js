@@ -688,7 +688,7 @@ function postPage(post) {
 
 // ── Page: homepage / post index ───────────────────────────────────────────────
 // Receives the full sorted array of posts and renders a list of them.
-function indexPage(posts) {
+function indexPage(posts, work) {
   // Map each post to a list item, then join them all into one string
   const items = posts
     .map((p) => {
@@ -730,7 +730,12 @@ function indexPage(posts) {
     <p><a class="back-link" href="/posts.html">All Posts →</a></p>
     </div>
 
-    <ul class="post-list">${items}</ul>`;
+    <ul class="post-list">${items}</ul>
+    <div class='work'>
+    <h2>Work</h2>
+    <div>${parseMarkdown(work)}</div>
+    </div>
+    `;
 
   return htmlShell({
     title: CONFIG.siteTitle,
@@ -916,7 +921,10 @@ function build() {
   // ── Step 4: Write the homepage ────────────────────────────────────────────
   fs.writeFileSync(
     path.join(outputDir, "index.html"),
-    indexPage(posts.slice(0, 3)),
+    indexPage(
+      posts.slice(0, 3),
+      fs.readFileSync(path.join("./work", "work.md"), "utf8"),
+    ),
   );
   console.log("  ✓ index.html");
 
