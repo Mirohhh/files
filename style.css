@@ -193,6 +193,9 @@ blockquote {
 }
 
 /* ── Code blocks ── */
+pre[class*="language-"] {
+    background: var(--tag-bg);
+}
 pre {
     background: var(--tag-bg);
     padding: 1.25rem 1.5rem;
