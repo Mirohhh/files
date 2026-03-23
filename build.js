@@ -18,7 +18,7 @@ const CONFIG = {
   siteDescription:
     "My name is Omar. I'm a software engineer from Egypt. I write about software development and technology. My main interests are Web Development and Ml/AI.", // used in the homepage subtitle and RSS feed
   siteDescLinks: ["Email", "LinkedIn", "Github"],
-  siteUrl: "https://omarshabana.com", // used for absolute URLs in RSS items and the feed's self-link
+  siteUrl: "https://omarsh-site.netlify.app", // used for absolute URLs in RSS items and the feed's self-link
   author: "Omar Shabana", // shown in the footer copyright line
   postsDir: "./posts", // where markdown source files live (relative to this script)
   outputDir: "./public", // where generated HTML files are written
