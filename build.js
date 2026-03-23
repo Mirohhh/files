@@ -664,7 +664,7 @@ function postPage(post) {
     .join("");
 
   const body = `
-    <p><a class="back-link" href="/">← All posts</a></p>
+    <p><a class="back-link" href="/posts/">← All posts</a></p>
     <article>
       <h1>${esc(post.meta.title)}</h1>
       <div class="post-meta">
