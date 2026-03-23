@@ -731,10 +731,10 @@ function indexPage(posts, work) {
     </div>
 
     <ul class="post-list">${items}</ul>
-    <div class='work'>
-    <h2>Work</h2>
-    <div>${parseMarkdown(work)}</div>
+    <div class='recent'>
+    <h2>Projects</h2>
     </div>
+    <div>${parseMarkdown(work)}</div>
     `;
 
   return htmlShell({
