@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>Home</title>
+  <link>https://omarshabana.com</link>
+  <description>My name is Omar. I'm a software engineer from Egypt. I write about software development and technology. My main interests are Web Development and Ml/AI.</description>
+  <language>en-us</language>
+  <!-- The atom:link self-reference is required for RSS validators and recommended by the spec -->
+  <atom:link href="https://omarshabana.com/feed.xml" rel="self" type="application/rss+xml"/>
+  <item>
+    <title>Let's test the tags feature!</title>
+    <link>https://omarshabana.com/tagtest.html</link>
+    <guid>https://omarshabana.com/tagtest.html</guid>
+    <pubDate>Sun, 22 Mar 2026 00:00:00 GMT</pubDate>
+    <description>We out here testing the tags feature y'all!</description>
+  </item>
+  <item>
+    <title>Hello, World</title>
+    <link>https://omarshabana.com/hello-world.html</link>
+    <guid>https://omarshabana.com/hello-world.html</guid>
+    <pubDate>Thu, 19 Mar 2026 00:00:00 GMT</pubDate>
+    <description>The first post on this blog — why I'm writing and what to expect.</description>
+  </item>
+  <item>
+    <title>Test, test</title>
+    <link>https://omarshabana.com/test-post.html</link>
+    <guid>https://omarshabana.com/test-post.html</guid>
+    <pubDate>Thu, 19 Mar 2026 00:00:00 GMT</pubDate>
+    <description>The first post on this blog — why I'm writing and what to expect.</description>
+  </item>
+  <item>
+    <title>Test, test</title>
+    <link>https://omarshabana.com/test2.html</link>
+    <guid>https://omarshabana.com/test2.html</guid>
+    <pubDate>Thu, 19 Mar 2026 00:00:00 GMT</pubDate>
+    <description>The first post on this blog — why I'm writing and what to expect.</description>
+  </item>
+  <item>
+    <title>Test, test</title>
+    <link>https://omarshabana.com/test3.html</link>
+    <guid>https://omarshabana.com/test3.html</guid>
+    <pubDate>Thu, 19 Mar 2026 00:00:00 GMT</pubDate>
+    <description>The first post on this blog — why I'm writing and what to expect.</description>
+  </item>
+  <item>
+    <title>Test, test</title>
+    <link>https://omarshabana.com/test4.html</link>
+    <guid>https://omarshabana.com/test4.html</guid>
+    <pubDate>Thu, 19 Mar 2026 00:00:00 GMT</pubDate>
+    <description>The first post on this blog — why I'm writing and what to expect.</description>
+  </item>
+  <item>
+    <title>How the Markdown Parser Works</title>
+    <link>https://omarshabana.com/how-the-parser-works.html</link>
+    <guid>https://omarshabana.com/how-the-parser-works.html</guid>
+    <pubDate>Sun, 15 Mar 2026 00:00:00 GMT</pubDate>
+    <description>A walkthrough of the custom markdown parser powering this blog.</description>
+  </item>
+</channel>
+</rss>

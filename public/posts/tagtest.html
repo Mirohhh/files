@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Let's test the tags feature!</title>
+  <meta name="description" content="We out here testing the tags feature y'all!">
+  <!-- RSS autodiscovery: browsers and feed readers find the feed automatically -->
+  <link rel="alternate" type="application/rss+xml" title="Home" href="/feed.xml">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<nav>
+  <a class="site-title" href="/">Home</a>
+  <div class="nav-links">
+    <a href="/feed.xml">RSS</a>
+  </div>
+</nav>
+<main>
+    <p><a class="back-link" href="/">← All posts</a></p>
+    <article>
+      <h1>Let's test the tags feature!</h1>
+      <div class="post-meta">
+        <!-- <time datetime="..."> is semantic HTML: machine-readable date for SEO/accessibility -->
+        <time datetime="2026-03-22T00:00:00.000Z">March 22, 2026</time>
+        <span>·</span>
+        <span>1 min read</span>
+        <!-- only render the tags section if this post has tags -->
+        <span>·</span><div class="tags"><a class="tag" href="/tags/test.html">#test</a><a class="tag" href="/tags/technical.html">#technical</a><a class="tag" href="/tags/meta.html">#meta</a></div>
+      </div>
+      <!-- post.html is the fully parsed markdown → HTML content -->
+      <h1 id="tag-test-1">Tag test #1</h1>
+<blockquote><p>let's test tags<br>tags we testing<br>test! test!</p></blockquote>
+    </article></main>
+<footer>
+  <p>© 2026 Omar Shabana ── built with a <a href="https://github.com/mirohhh/markdown-parser">custom markdown parser</a></p>
+</footer>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>

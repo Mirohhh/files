@@ -1,0 +1,325 @@
+/* ── Design tokens (light mode defaults) ── */
+:root {
+    --bg: #ffffff; /* page background */
+    --fg: #1a1a1a; /* body text */
+    --muted: #6b6b6b; /* secondary text: dates, reading time, descriptions */
+    --border: #e8e8e8; /* dividers, code block borders, tag borders */
+    --accent: #0062cc; /* link color */
+    --code-bg: #f6f6f6; /* inline code and code block backgrounds */
+    --tag-bg: #f0f0f0; /* tag pill backgrounds */
+}
+
+/* ── Dark mode: flips all tokens when the OS prefers dark ── */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: oklch(0.145 0 0);
+        --fg: oklch(0.985 0 0);
+        /*--bg: #0f0f0f;
+        --fg: #e4e4e4;*/
+        --muted: oklch(0.708 0 0);
+        --border: #272727;
+        --accent: #5ba3f5; /* slightly lighter blue for readability on dark bg */
+        --code-bg: #181818;
+        --tag-bg: #1e1e1e;
+    }
+}
+
+/* ── Reset ── */
+/* box-sizing: border-box makes width/padding calculations intuitive */
+/* margin/padding 0 removes browser default spacing we'd have to fight */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* ── Base ── */
+body {
+    /* System font stack: native fonts on each OS, no download required */
+    /*display: grid;
+    grid-template-rows: auto 1fr auto;*/
+    /*flex-direction: column;*/
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Georgia, serif;
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.75; /* generous line height improves readability for long-form text */
+    font-size: 18px; /* slightly larger than browser default (16px) for comfort */
+    padding: 2.5rem 1.25rem; /* top padding + side gutters on mobile */
+}
+
+/* ── Navigation ── */
+nav {
+    max-width: 680px; /* same width cap as the content */
+    margin: 0 auto 3.5rem; /* center it and add space below before the content */
+    display: flex;
+    justify-content: space-between; /* site title on left, links on right */
+    align-items: center;
+}
+nav .site-title {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--fg);
+    text-decoration: none;
+}
+nav .nav-links {
+    display: flex;
+    gap: 1.25rem;
+}
+nav .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+nav .nav-links a:hover {
+    color: var(--fg);
+}
+
+/* ── Content area ── */
+/* 680px is ~70 characters wide at 18px — the ideal measure for reading */
+main {
+    min-height: calc(100vh - 14rem);
+    max-width: 680px;
+    margin: 0 auto;
+}
+
+.site-links {
+    display: flex;
+    gap: 0.8rem;
+}
+.site-links a {
+    /*color: var(--muted);*/
+    text-decoration: none;
+    font-size: 1rem;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.site-links a:hover {
+    text-decoration: underline;
+}
+body > main > div > div > span:last-child {
+    display: none;
+}
+
+/* ── Footer ── */
+footer {
+    display: flex;
+    justify-content: center;
+    max-width: 680px;
+    margin: auto auto 0;
+    /*padding-top: 2rem;*/
+    /*border-top: 1px solid var(--border);*/
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    margin-top: 2rem;
+}
+div.recent {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    /*margin-bottom: 1rem;*/
+    border-bottom: 1px solid var(--border);
+}
+div.recent h2 {
+    margin: 1rem 0;
+}
+div.recent p {
+    margin: 1rem 0;
+}
+
+/* ── Typography ── */
+h1 {
+    font-size: 2rem;
+    line-height: 1.25;
+    margin-bottom: 0.75rem;
+}
+h2 {
+    font-size: 1.4rem;
+    line-height: 1.35;
+    margin: 2.25rem 0 0.6rem;
+}
+h3 {
+    font-size: 1.15rem;
+    margin: 1.75rem 0 0.5rem;
+}
+h4,
+h5,
+h6 {
+    font-size: 1rem;
+    margin: 1.5rem 0 0.4rem;
+}
+p {
+    margin-bottom: 1.3rem;
+}
+footer > p {
+    margin-bottom: 0;
+}
+a {
+    color: var(--accent);
+}
+a:hover {
+    text-decoration: none;
+} /* underline on default, remove on hover = subtle inversion */
+strong {
+    font-weight: 600;
+}
+ul,
+ol {
+    padding-left: 1.6rem;
+    margin-bottom: 1.3rem;
+}
+li {
+    margin-bottom: 0.3rem;
+}
+hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2.5rem 0;
+}
+img {
+    max-width: 100%;
+    border-radius: 6px;
+    margin: 1rem 0;
+} /* responsive images */
+blockquote {
+    border-left: 3px solid var(--border); /* classic blockquote left bar */
+    padding-left: 1.25rem;
+    color: var(--muted);
+    margin: 1.5rem 0;
+    font-style: italic;
+}
+
+/* ── Code blocks ── */
+pre {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    overflow-x: auto; /* horizontal scroll for long lines instead of wrapping */
+    margin: 1.5rem 0;
+    font-size: 0.875rem; /* slightly smaller than body text */
+    line-height: 1.6;
+    border: 1px solid var(--border);
+}
+/* When <code> is inside <pre>, reset all the inline code styles */
+pre code {
+    background: none;
+    padding: 0;
+    font-size: inherit;
+}
+
+/* ── Inline code ── */
+code {
+    /* Monospace stack: prefer SF Mono / Fira Code / Cascadia, fall back to system mono */
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    background: var(--code-bg);
+    padding: 0.15em 0.45em;
+    border-radius: 4px;
+    font-size: 0.875em; /* em = relative to parent, so it scales with surrounding text */
+    border: 1px solid var(--border);
+}
+
+/* ── Tag pills ── */
+.tags {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+.tag {
+    background: var(--tag-bg);
+    color: var(--muted);
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px; /* large value = fully rounded "pill" shape */
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    border: 1px solid var(--border);
+    transition: color 0.15s; /* smooth color change on hover */
+}
+.tag:hover {
+    color: var(--fg);
+}
+
+/* ── Post metadata row (date · reading time · tags) ── */
+.post-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap; /* wraps gracefully on narrow screens */
+    color: var(--muted);
+    font-size: 0.875rem;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    margin-bottom: 2.5rem;
+}
+
+/* ── Homepage post list ── */
+.index-header {
+    margin-bottom: 2rem;
+}
+.index-header h1 {
+    font-size: 1.6rem;
+}
+.index-header p {
+    color: var(--muted);
+    margin-top: 0.4rem;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.post-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 2rem;
+} /* reset <ul> bullets/indent */
+.post-item {
+    padding: 1rem 0;
+    /*border-top: 1px solid var(--border); /* horizontal rule between posts */
+}
+/*.post-item:first-child {
+    border-top: 0;
+} /* top border on first item */
+.post-item h2 {
+    font-size: 1.15rem;
+    margin: 0 0 0.35rem;
+}
+.post-item h2 a {
+    color: var(--fg);
+    text-decoration: none;
+} /* title links are fg, not accent */
+.post-item h2 a:hover {
+    color: var(--accent);
+}
+.post-item .item-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    color: var(--muted);
+    font-size: 0.83rem;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    margin-bottom: 0.5rem;
+}
+.post-item p {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+/* ── Tag archive pages ── */
+.tag-heading {
+    margin-bottom: 0.4rem;
+}
+.tag-heading span {
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 1.2rem;
+}
+.back-link {
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-decoration: none;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.back-link:hover {
+    color: var(--fg);
+}
