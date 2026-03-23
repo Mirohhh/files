@@ -617,7 +617,6 @@ function footerHtml() {
 function prismScripts() {
   const base = "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0";
   return `
-  <link rel="stylesheet" href="${base}/themes/prism-tomorrow.min.css">
   <script src="${base}/prism.min.js"></script>
   <script src="${base}/plugins/autoloader/prism-autoloader.min.js"></script>`;
 }
@@ -639,6 +638,7 @@ function htmlShell({ title, description = "", head = "", body }) {
   <meta name="description" content="${esc(description)}">
   <!-- RSS autodiscovery: browsers and feed readers find the feed automatically -->
   <link rel="alternate" type="application/rss+xml" title="${CONFIG.siteTitle}" href="/feed.xml">
+  <link rel="stylesheet" href="${base}/themes/prism-tomorrow.min.css">
   <link rel="stylesheet" href="/style.css">${head}
 </head>
 <body>
