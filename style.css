@@ -194,11 +194,11 @@ blockquote {
 
 /* ── Code blocks ── */
 :not(pre) > code[class*="language-"], pre[class*="language-"] {
-    background: var(--tag-bg);
+    background: var(--code-bg);
 }
 
 pre {
-    background: var(--tag-bg);
+    background: var(--code-bg);
     padding: 1.25rem 1.5rem;
     overflow-x: auto; /* horizontal scroll for long lines instead of wrapping */
     margin: 1.5rem 0;
