@@ -833,8 +833,8 @@ function tagPage(tag, posts) {
 function rssItem(post) {
   return `  <item>
     <title>${esc(post.meta.title)}</title>
-    <link>${CONFIG.siteUrl}/${post.slug}.html</link>
-    <guid>${CONFIG.siteUrl}/${post.slug}.html</guid>
+    <link>${CONFIG.siteUrl}/posts/${post.slug}.html</link>
+    <guid>${CONFIG.siteUrl}/posts/${post.slug}.html</guid>
     <pubDate>${new Date(post.meta.date).toUTCString()}</pubDate>
     <description>${esc(post.meta.description || "")}</description>
   </item>`;
