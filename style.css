@@ -230,8 +230,8 @@ code {
 .tag {
     background: var(--tag-bg);
     color: var(--muted);
-    padding: 0.2rem 0.65rem;
-    border-radius: 999px; /* large value = fully rounded "pill" shape */
+    padding: 0.1rem 0.4rem;
+    /*border-radius: 999px; /* large value = fully rounded "pill" shape */
     text-decoration: none;
     font-size: 0.78rem;
     font-family: -apple-system, BlinkMacSystemFont, sans-serif;
@@ -240,6 +240,7 @@ code {
 }
 .tag:hover {
     color: var(--fg);
+    text-decoration: underline;
 }
 
 /* ── Post metadata row (date · reading time · tags) ── */

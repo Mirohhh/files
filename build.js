@@ -802,7 +802,7 @@ function tagPage(tag, posts) {
     .join("\n");
 
   const body = `
-    <p><a class="back-link" href="/">← All posts</a></p>
+    <p><a class="back-link" href="/posts.html">← All posts</a></p>
     <br>
     <h1 class="tag-heading">Posts tagged <span>#${esc(tag)}</span></h1>
     <ul class="post-list">${items}</ul>`;
