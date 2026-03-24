@@ -751,7 +751,7 @@ function indexPage(posts, work) {
     `;
 
   return htmlShell({
-    title: CONFIG.siteTitle,
+    title: "Home",
     description: CONFIG.siteDescription,
     body,
   });
