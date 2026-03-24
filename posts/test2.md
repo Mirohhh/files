@@ -5,6 +5,8 @@ description: After years of Node.js, I finally migrated my static site generator
 tags: [deno, javascript, meta]
 ---
 
+![Deno Hero](/assets/deno.png)
+
 I've been building my own static site generators for years, and they've always used Node.js. It's the standard, it's what I know, and it works. But recently, I decided to take the plunge and migrate my entire blog build system to **Deno**.
 
 ## Why Deno?

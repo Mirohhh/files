@@ -973,12 +973,24 @@ function build() {
     console.log(`  ✓ tags/${key}.html`);
   }
 
-  // ── Step 6: Copy the stylesheet ──────────────────────────────────────────
-  // style.css lives next to build.js in the project root. We copy it into
-  // public/ so it's served alongside the HTML files. This is the only file
-  // that needs copying — everything else is generated fresh each build.
+  // ── Step 6: Copy assets and stylesheet ──────────────────────────────────────────
+  // style.css lives next to build.js in the project root. We copy it into 
+  // public/ so it's served alongside the HTML files.
   Deno.copyFileSync("./style.css", join(outputDir, "style.css"));
   console.log("  ✓ style.css");
+
+  // Copy assets folder if it exists
+  try {
+    const assetsDir = "./assets";
+    const destAssetsDir = join(outputDir, "assets");
+    Deno.mkdirSync(destAssetsDir, { recursive: true });
+    for (const entry of Deno.readDirSync(assetsDir)) {
+      Deno.copyFileSync(join(assetsDir, entry.name), join(destAssetsDir, entry.name));
+    }
+    console.log("  ✓ assets/");
+  } catch (e) {
+    console.error("  ✗ Error copying assets:", e.message);
+  }
 
   // ── Step 7: Write the RSS feed ────────────────────────────────────────────
   Deno.writeTextFileSync(join(outputDir, "feed.xml"), rssFeed(posts));

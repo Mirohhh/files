@@ -1,6 +1,6 @@
 {
   "tasks": {
     "build": "deno run --allow-read --allow-write build.js",
-    "watch": "deno run --allow-read --allow-write --watch build.js"
+    "watch": "deno run --allow-read --allow-write --watch=build.js,style.css,posts/,work/ build.js"
   }
 }
