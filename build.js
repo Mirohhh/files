@@ -17,7 +17,7 @@ const CONFIG = {
   siteDescHeader: "Hi There! ... Who am I?",
   siteDescription:
     "My name is Omar. I'm a software engineer from Egypt. I write about software development and technology. My main interests are Web Development and Ml/AI.", // used in the homepage subtitle and RSS feed
-  siteDescLinks: ["Email", "LinkedIn", "Github"],
+  siteDescLinks: [ "Email", "LinkedIn", "Github" ],
   siteUrl: "https://omarsh-site.netlify.app", // used for absolute URLs in RSS items and the feed's self-link
   author: "Omar Shabana", // shown in the footer copyright line
   postsDir: "./posts", // where markdown source files live (relative to this script)
@@ -123,7 +123,7 @@ function parseFrontmatter(raw) {
 
   // match[1] is the raw frontmatter text. Split it into individual lines
   // and parse each one as "key: value".
-  for (const line of match[1].split("\n")) {
+  for (const line of match[ 1 ].split("\n")) {
     const colon = line.indexOf(":");
     if (colon === -1) continue; // skip any line without a colon (blank lines, etc.)
 
@@ -147,11 +147,11 @@ function parseFrontmatter(raw) {
         .filter(Boolean); // discard empty values
     }
 
-    meta[key] = val;
+    meta[ key ] = val;
   }
 
   // match[2] is everything after the closing "---" — the actual post content.
-  return { meta, body: match[2] };
+  return { meta, body: match[ 2 ] };
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -227,7 +227,7 @@ function inline(text) {
     .replace(/~~(.+?)~~/g, "<del>$1</del>");
 
   // ── Step 3: restore code spans ──────────────────────────────────────────
-  return text.replace(/\x00(\d+)\x00/g, (_, i) => codeSpans[+i]);
+  return text.replace(/\x00(\d+)\x00/g, (_, i) => codeSpans[ +i ]);
 }
 
 // ── Table helpers ─────────────────────────────────────────────────────────────
@@ -237,8 +237,8 @@ function inline(text) {
 // Example: "| foo | bar |" → ["foo", "bar"]
 function parseTableRow(line) {
   let cells = line.split("|");
-  if (cells[0].trim() === "") cells = cells.slice(1);
-  if (cells[cells.length - 1].trim() === "") cells = cells.slice(0, -1);
+  if (cells[ 0 ].trim() === "") cells = cells.slice(1);
+  if (cells[ cells.length - 1 ].trim() === "") cells = cells.slice(0, -1);
   return cells.map((c) => c.trim());
 }
 
@@ -266,14 +266,14 @@ function colAlignment(cell) {
 //   - Task lists    ("- [ ] text" / "- [x] text" become checkboxes)
 //   - Mixed nesting (a ul item can contain an ol sub-list and vice versa)
 function parseList(lines, i, baseIndent, inlineFn) {
-  const firstContent = lines[i].slice(baseIndent);
+  const firstContent = lines[ i ].slice(baseIndent);
   const isOrdered = /^\d+\. /.test(firstContent);
   const tag = isOrdered ? "ol" : "ul";
   const items = [];
 
   while (i < lines.length) {
-    const line = lines[i];
-    const lineIndent = line.match(/^( *)/)[1].length;
+    const line = lines[ i ];
+    const lineIndent = line.match(/^( *)/)[ 1 ].length;
 
     if (lineIndent < baseIndent) break; // exited this list level
 
@@ -284,15 +284,15 @@ function parseList(lines, i, baseIndent, inlineFn) {
     if (!ulM && !olM) break; // not a list item — stop
     if (!!olM !== isOrdered) break; // list type switched — let caller handle
 
-    const text = ulM ? ulM[1] : content.replace(/^\d+\. /, "");
+    const text = ulM ? ulM[ 1 ] : content.replace(/^\d+\. /, "");
     i++;
 
     // Task-list checkbox: "[ ] " (unchecked) or "[x]"/"[X]" (checked)
     let itemHtml;
     const taskM = text.match(/^\[( |x)\] (.*)/i);
     if (taskM) {
-      const checked = taskM[1].toLowerCase() === "x" ? " checked" : "";
-      itemHtml = `<input type="checkbox" disabled${checked}> ${inlineFn(taskM[2])}`;
+      const checked = taskM[ 1 ].toLowerCase() === "x" ? " checked" : "";
+      itemHtml = `<input type="checkbox" disabled${checked}> ${inlineFn(taskM[ 2 ])}`;
     } else {
       itemHtml = inlineFn(text);
     }
@@ -300,8 +300,8 @@ function parseList(lines, i, baseIndent, inlineFn) {
     // Sub-list: if the next line is indented deeper, recurse
     let subHtml = "";
     if (i < lines.length) {
-      const nextIndent = lines[i].match(/^( *)/)[1].length;
-      const nextContent = lines[i].slice(nextIndent);
+      const nextIndent = lines[ i ].match(/^( *)/)[ 1 ].length;
+      const nextContent = lines[ i ].slice(nextIndent);
       if (
         nextIndent > baseIndent &&
         (/^[-*+] /.test(nextContent) || /^\d+\. /.test(nextContent))
@@ -335,7 +335,7 @@ function parseMarkdown(md) {
   const lines = md.split("\n").filter((line) => {
     const m = line.match(/^\[\^([^\]]+)\]:\s*(.*)/);
     if (m) {
-      footnoteDefs[m[1]] = m[2];
+      footnoteDefs[ m[ 1 ] ] = m[ 2 ];
       return false;
     }
     return true;
@@ -359,7 +359,7 @@ function parseMarkdown(md) {
   let i = 0; // current line index — we advance this manually
 
   while (i < lines.length) {
-    const line = lines[i];
+    const line = lines[ i ];
 
     // ── Raw HTML passthrough ──────────────────────────────────────────────────
     // Any line starting with an HTML tag (opening or closing) is passed through
@@ -367,8 +367,8 @@ function parseMarkdown(md) {
     // non-blank lines so multi-line blocks like <details>…</details> stay intact.
     if (/^<\/?[a-zA-Z]/.test(line)) {
       const html = [];
-      while (i < lines.length && lines[i].trim()) {
-        html.push(lines[i]);
+      while (i < lines.length && lines[ i ].trim()) {
+        html.push(lines[ i ]);
         i++;
       }
       out.push(html.join("\n"));
@@ -384,8 +384,8 @@ function parseMarkdown(md) {
       const code = [];
       i++; // move past the opening ```
 
-      while (i < lines.length && !lines[i].startsWith("```")) {
-        code.push(esc(lines[i]));
+      while (i < lines.length && !lines[ i ].startsWith("```")) {
+        code.push(esc(lines[ i ]));
         i++;
       }
 
@@ -399,9 +399,9 @@ function parseMarkdown(md) {
     // ATX-style headings start with 1–6 # characters followed by a space.
     const hm = line.match(/^(#{1,6})\s+(.*)/);
     if (hm) {
-      const lvl = hm[1].length;
-      const txt = inlineF(hm[2]);
-      const id = slugify(hm[2]);
+      const lvl = hm[ 1 ].length;
+      const txt = inlineF(hm[ 2 ]);
+      const id = slugify(hm[ 2 ]);
       out.push(`<h${lvl} id="${id}">${txt}</h${lvl}>`);
       i++;
       continue;
@@ -414,7 +414,7 @@ function parseMarkdown(md) {
     if (
       line.trim() &&
       i + 1 < lines.length &&
-      /^={2,}\s*$/.test(lines[i + 1])
+      /^={2,}\s*$/.test(lines[ i + 1 ])
     ) {
       out.push(`<h1 id="${slugify(line)}">${inlineF(line)}</h1>`);
       i += 2;
@@ -423,7 +423,7 @@ function parseMarkdown(md) {
     if (
       line.trim() &&
       i + 1 < lines.length &&
-      /^-{2,}\s*$/.test(lines[i + 1])
+      /^-{2,}\s*$/.test(lines[ i + 1 ])
     ) {
       out.push(`<h2 id="${slugify(line)}">${inlineF(line)}</h2>`);
       i += 2;
@@ -442,8 +442,8 @@ function parseMarkdown(md) {
     // Lines starting with "> " are collected into a single <blockquote>.
     if (line.startsWith("> ")) {
       const ql = [];
-      while (i < lines.length && lines[i].startsWith("> ")) {
-        ql.push(inlineF(lines[i].slice(2)));
+      while (i < lines.length && lines[ i ].startsWith("> ")) {
+        ql.push(inlineF(lines[ i ].slice(2)));
         i++;
       }
       out.push(`<blockquote><p>${ql.join("<br>")}</p></blockquote>`);
@@ -456,26 +456,26 @@ function parseMarkdown(md) {
     if (
       line.includes("|") &&
       i + 1 < lines.length &&
-      /^\|?[\s:|-]+\|/.test(lines[i + 1]) &&
-      lines[i + 1].includes("-")
+      /^\|?[\s:|-]+\|/.test(lines[ i + 1 ]) &&
+      lines[ i + 1 ].includes("-")
     ) {
       const headers = parseTableRow(line);
-      const aligns = parseTableRow(lines[i + 1]).map(colAlignment);
+      const aligns = parseTableRow(lines[ i + 1 ]).map(colAlignment);
       i += 2; // consume header + separator
 
       const headCells = headers
         .map((h, ci) => {
-          const align = aligns[ci] ? ` style="text-align:${aligns[ci]}"` : "";
+          const align = aligns[ ci ] ? ` style="text-align:${aligns[ ci ]}"` : "";
           return `<th${align}>${inlineF(h)}</th>`;
         })
         .join("");
       const thead = `<thead><tr>${headCells}</tr></thead>`;
 
       const bodyRows = [];
-      while (i < lines.length && lines[i].includes("|")) {
-        const tds = parseTableRow(lines[i])
+      while (i < lines.length && lines[ i ].includes("|")) {
+        const tds = parseTableRow(lines[ i ])
           .map((c, ci) => {
-            const align = aligns[ci] ? ` style="text-align:${aligns[ci]}"` : "";
+            const align = aligns[ ci ] ? ` style="text-align:${aligns[ ci ]}"` : "";
             return `<td${align}>${inlineF(c)}</td>`;
           })
           .join("");
@@ -524,19 +524,19 @@ function parseMarkdown(md) {
     const para = [];
     while (
       i < lines.length &&
-      lines[i].trim() && // not blank
-      !lines[i].startsWith("#") && // not ATX heading
-      !lines[i].startsWith("```") && // not code fence
-      !lines[i].startsWith("> ") && // not blockquote
-      !/^[-*+] /.test(lines[i]) && // not ul item
-      !/^\d+\. /.test(lines[i]) && // not ol item
-      !/^(-{3,}|\*{3,}|_{3,})\s*$/.test(lines[i]) && // not hr
-      !/^<\/?[a-zA-Z]/.test(lines[i]) && // not raw HTML
-      !lines[i].includes("|") && // not table row
-      !(i + 1 < lines.length && /^={2,}\s*$/.test(lines[i + 1])) && // not setext h1
-      !(i + 1 < lines.length && /^-{2,}\s*$/.test(lines[i + 1])) // not setext h2
+      lines[ i ].trim() && // not blank
+      !lines[ i ].startsWith("#") && // not ATX heading
+      !lines[ i ].startsWith("```") && // not code fence
+      !lines[ i ].startsWith("> ") && // not blockquote
+      !/^[-*+] /.test(lines[ i ]) && // not ul item
+      !/^\d+\. /.test(lines[ i ]) && // not ol item
+      !/^(-{3,}|\*{3,}|_{3,})\s*$/.test(lines[ i ]) && // not hr
+      !/^<\/?[a-zA-Z]/.test(lines[ i ]) && // not raw HTML
+      !lines[ i ].includes("|") && // not table row
+      !(i + 1 < lines.length && /^={2,}\s*$/.test(lines[ i + 1 ])) && // not setext h1
+      !(i + 1 < lines.length && /^-{2,}\s*$/.test(lines[ i + 1 ])) // not setext h2
     ) {
-      para.push(lines[i]);
+      para.push(lines[ i ]);
       i++;
     }
 
@@ -556,9 +556,9 @@ function parseMarkdown(md) {
   // list at the bottom of the document, each with a ↩ back-link to its reference.
   if (footnoteOrder.length > 0) {
     const items = footnoteOrder
-      .filter((label) => footnoteDefs[label])
+      .filter((label) => footnoteDefs[ label ])
       .map((label, idx) => {
-        return `<li id="fn-${label}">${inline(footnoteDefs[label])} <a href="#fnref-${label}" aria-label="Back to content">↩</a></li>`;
+        return `<li id="fn-${label}">${inline(footnoteDefs[ label ])} <a href="#fnref-${label}" aria-label="Back to content">↩</a></li>`;
       });
     if (items.length) {
       out.push(
@@ -664,7 +664,7 @@ function postPage(post) {
     .join("");
 
   const body = `
-    <p><a class="back-link" href="/posts/">← All posts</a></p>
+    <p><a class="back-link" href="/posts.html">← All posts</a></p>
     <article>
       <h1>${esc(post.meta.title)}</h1>
       <div class="post-meta">
@@ -718,11 +718,11 @@ function indexPage(posts, work) {
       <p>${CONFIG.siteDescription}</p>
       <div class="site-links">
       ${(CONFIG.siteDescLinks || [])
-        .map((link) => {
-          const href = LINK_MAP[link] || "#";
-          return `<a href="${href}">${link}</a> <span>·</span>`;
-        })
-        .join("")}
+      .map((link) => {
+        const href = LINK_MAP[ link ] || "#";
+        return `<a href="${href}">${link}</a> <span>·</span>`;
+      })
+      .join("")}
       </div>
     </div>
     <div class='recent'>
@@ -938,14 +938,14 @@ function build() {
       const key = slugify(tag); // normalize the tag to a URL-safe key
 
       // Initialize the tag entry if this is the first post with this tag
-      if (!tagMap[key]) tagMap[key] = { label: tag, posts: [] };
+      if (!tagMap[ key ]) tagMap[ key ] = { label: tag, posts: [] };
 
-      tagMap[key].posts.push(post);
+      tagMap[ key ].posts.push(post);
     }
   }
 
   // Write one HTML file per unique tag into public/tags/
-  for (const [key, { label, posts: tagged }] of Object.entries(tagMap)) {
+  for (const [ key, { label, posts: tagged } ] of Object.entries(tagMap)) {
     const dest = path.join(outputDir, "tags", `${key}.html`);
     fs.writeFileSync(dest, tagPage(label, tagged));
     console.log(`  ✓ tags/${key}.html`);

@@ -193,21 +193,25 @@ blockquote {
 }
 
 /* ── Code blocks ── */
+:not(pre) > code[class*="language-"], pre[class*="language-"] {
+    background: var(--code-bg);
+}
+
 pre {
     background: var(--code-bg);
-    border-radius: 8px;
     padding: 1.25rem 1.5rem;
     overflow-x: auto; /* horizontal scroll for long lines instead of wrapping */
     margin: 1.5rem 0;
     font-size: 0.875rem; /* slightly smaller than body text */
     line-height: 1.6;
-    border: 1px solid var(--border);
+    border: none;
 }
 /* When <code> is inside <pre>, reset all the inline code styles */
 pre code {
     background: none;
     padding: 0;
     font-size: inherit;
+    border: none;
 }
 
 /* ── Inline code ── */
@@ -218,7 +222,6 @@ code {
     padding: 0.15em 0.45em;
     border-radius: 4px;
     font-size: 0.875em; /* em = relative to parent, so it scales with surrounding text */
-    border: 1px solid var(--border);
 }
 
 /* ── Tag pills ── */
@@ -323,4 +326,5 @@ code {
 }
 .back-link:hover {
     color: var(--fg);
+    text-decoration: underline;
 }
