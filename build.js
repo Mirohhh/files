@@ -666,10 +666,10 @@ function postPage(post, prev, next) {
   const postNav = `
     <nav class="post-nav">
       <div class="post-nav-prev">
-        ${prev ? `<span class="post-nav-label">← </span><a href="/posts/${prev.slug}.html">${esc(prev.meta.title)}</a>` : ""}
+        ${prev ? `<a href="/posts/${prev.slug}.html">← ${esc(prev.meta.title)}</a>` : ""}
       </div>
       <div class="post-nav-next">
-        ${next ? `<span class="post-nav-label"> →</span><a href="/posts/${next.slug}.html">${esc(next.meta.title)}</a>` : ""}
+        ${next ? `<a href="/posts/${next.slug}.html">${esc(next.meta.title)} →</a>` : ""}
       </div>
     </nav>`;
 
