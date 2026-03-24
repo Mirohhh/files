@@ -5,8 +5,6 @@ description: A walkthrough of the custom markdown parser powering this blog.
 tags: [code, javascript]
 ---
 
-# How the Markdown Parser Works
-
 This blog runs on a custom markdown parser written in Node.js. Let's walk through how it works.
 
 ## The approach

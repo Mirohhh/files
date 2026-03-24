@@ -169,10 +169,10 @@ strong {
 ul,
 ol {
     padding-left: 1.6rem;
-    margin-bottom: 1.3rem;
+    margin-bottom: 1.2rem;
 }
 li {
-    margin-bottom: 0.3rem;
+    /* margin-bottom: 0.3rem; */
 }
 hr {
     border: none;
@@ -227,19 +227,19 @@ code {
 /* ── Tag pills ── */
 .tags {
     display: flex;
-    gap: 0.4rem;
+    gap: 0.5rem;
     flex-wrap: wrap;
 }
 .tag {
-    background: var(--tag-bg);
+    /* background: var(--tag-bg); */
     color: var(--muted);
-    padding: 0.1rem 0.4rem;
+    /* padding: 0.1rem 0.4rem; */
     /*border-radius: 999px; /* large value = fully rounded "pill" shape */
     text-decoration: none;
-    font-size: 0.78rem;
+    font-size: 0.9rem;
     font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    border: 1px solid var(--border);
-    transition: color 0.15s; /* smooth color change on hover */
+    /* border: 1px solid var(--border); */
+    /* transition: color 0.15s;  */
 }
 .tag:hover {
     color: var(--fg);
@@ -258,6 +258,17 @@ code {
     margin-bottom: 2.5rem;
 }
 
+.meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap; /* wraps gracefully on narrow screens */
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    /* margin-bottom: 2.5rem; */
+}
+
 /* ── Homepage post list ── */
 .index-header {
     margin-bottom: 2rem;
@@ -273,7 +284,7 @@ code {
 .post-list {
     list-style: none;
     padding: 0;
-    margin-top: 2rem;
+    margin-top: 1.2rem;
 } /* reset <ul> bullets/indent */
 .post-item {
     padding: 1rem 0;
@@ -283,13 +294,17 @@ code {
     border-top: 0;
 } /* top border on first item */
 .post-item h2 {
-    font-size: 1.15rem;
-    margin: 0 0 0.35rem;
+    font-size: 2rem;
+    margin: 0;
 }
 .post-item h2 a {
     color: var(--fg);
     text-decoration: none;
 } /* title links are fg, not accent */
+.post-item h2 a:hover {
+    text-decoration: underline;
+}
+
 .post-item h2 a:hover {
     color: var(--accent);
 }
@@ -304,9 +319,11 @@ code {
     margin-bottom: 0.5rem;
 }
 .post-item p {
+    margin-top: 0.25rem;
+    margin-bottom: 0;
     color: var(--muted);
-    font-size: 0.95rem;
-    margin: 0;
+    font-size: 1.2rem;
+    /* margin: 0; */
 }
 
 /* ── Tag archive pages ── */

@@ -10,8 +10,8 @@ that wraps the html files in an html shell
 
 ## to-do's
 
-- [ ] underline links
-- [ ] (post) move date and read-time above the post title
-- [ ] (post) move tags div under the post title
+- [x] underline links
+- [x] (post) move date and read-time above the post title
+- [x] (post) move tags div under the post title
 - [ ] (home) make projects a list
-- [ ] (all) remove tags background 
+- [x] (all) remove tags background 

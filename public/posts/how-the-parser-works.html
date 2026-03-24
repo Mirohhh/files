@@ -20,18 +20,18 @@
 <main>
     <p><a class="back-link" href="/posts.html">← All posts</a></p>
     <article>
+      <div class="meta">
+        <time datetime="2026-03-15T00:00:00.000Z">March 15, 2026</time>
+        <span>•</span>
+        <span>5 min read</span>
+      </div>
       <h1>How the Markdown Parser Works</h1>
       <div class="post-meta">
-        <!-- <time datetime="..."> is semantic HTML: machine-readable date for SEO/accessibility -->
-        <time datetime="2026-03-15T00:00:00.000Z">March 15, 2026</time>
-        <span>·</span>
-        <span>5 min read</span>
         <!-- only render the tags section if this post has tags -->
-        <span>·</span><div class="tags"><a class="tag" href="/tags/code.html">#code</a><a class="tag" href="/tags/javascript.html">#javascript</a></div>
+        <div class="tags"><a class="tag" href="/tags/code.html">#code</a><a class="tag" href="/tags/javascript.html">#javascript</a></div>
       </div>
       <!-- post.html is the fully parsed markdown → HTML content -->
-      <h1 id="how-the-markdown-parser-works">How the Markdown Parser Works</h1>
-<p>This blog runs on a custom markdown parser written in Node.js. Let's walk through how it works.</p>
+      <p>This blog runs on a custom markdown parser written in Node.js. Let's walk through how it works.</p>
 <h2 id="the-approach">The approach</h2>
 <p>The parser works in two passes. First, a pre-pass strips out footnote definitions and stores them by label. Then the main pass reads the source line by line, decides what kind of block each line starts, collects its content, and emits HTML.</p>
 <p>There are two levels of parsing:</p>

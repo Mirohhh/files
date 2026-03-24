@@ -666,14 +666,15 @@ function postPage(post) {
   const body = `
     <p><a class="back-link" href="/posts.html">← All posts</a></p>
     <article>
+      <div class="meta">
+        <time datetime="${isoDate(post.meta.date)}">${formatDate(post.meta.date)}</time>
+        <span>•</span>
+        <span>${readingTime(post.body)} min read</span>
+      </div>
       <h1>${esc(post.meta.title)}</h1>
       <div class="post-meta">
-        <!-- <time datetime="..."> is semantic HTML: machine-readable date for SEO/accessibility -->
-        <time datetime="${isoDate(post.meta.date)}">${formatDate(post.meta.date)}</time>
-        <span>·</span>
-        <span>${readingTime(post.body)} min read</span>
         <!-- only render the tags section if this post has tags -->
-        ${tagLinks ? `<span>·</span><div class="tags">${tagLinks}</div>` : ""}
+        ${tagLinks ? `<div class="tags">${tagLinks}</div>` : ""}
       </div>
       <!-- post.html is the fully parsed markdown → HTML content -->
       ${post.html}
@@ -697,14 +698,15 @@ function indexPage(posts, work) {
         .join("");
 
       return `<li class="post-item">
-      <h2><a href="/posts/${p.slug}.html">${esc(p.meta.title)}</a></h2>
-      <div class="item-meta">
-        <!-- <time datetime="..."> is semantic HTML: machine-readable date for SEO/accessibility -->
+      <div class="meta">
         <time datetime="${isoDate(p.meta.date)}">${formatDate(p.meta.date)}</time>
-        <span>·</span>
+        <span>•</span>
         <span>${readingTime(p.body)} min read</span>
+      </div>
+      <h2><a href="/posts/${p.slug}.html">${esc(p.meta.title)}</a></h2>
+      <div class="meta">
         <!-- only render the tags section if this post has tags -->
-        ${tagLinks ? `<span>·</span><div class="tags">${tagLinks}</div>` : ""}
+        ${tagLinks ? `<div class="tags">${tagLinks}</div>` : ""}
       </div>
       <!-- description is optional — only show it if it exists in frontmatter -->
       ${p.meta.description ? `<p>${esc(p.meta.description)}</p>` : ""}
@@ -755,14 +757,15 @@ function postsPage(posts) {
         .join("");
 
       return `<li class="post-item">
-      <h2><a href="/posts/${p.slug}.html">${esc(p.meta.title)}</a></h2>
-      <div class="item-meta">
-        <!-- <time datetime="..."> is semantic HTML: machine-readable date for SEO/accessibility -->
+      <div class="meta">
         <time datetime="${isoDate(p.meta.date)}">${formatDate(p.meta.date)}</time>
-        <span>·</span>
+        <span>•</span>
         <span>${readingTime(p.body)} min read</span>
+      </div>
+      <h2><a href="/posts/${p.slug}.html">${esc(p.meta.title)}</a></h2>
+      <div class="meta">
         <!-- only render the tags section if this post has tags -->
-        ${tagLinks ? `<span>·</span><div class="tags">${tagLinks}</div>` : ""}
+        ${tagLinks ? `<div class="tags">${tagLinks}</div>` : ""}
       </div>
       <!-- description is optional — only show it if it exists in frontmatter -->
       ${p.meta.description ? `<p>${esc(p.meta.description)}</p>` : ""}
