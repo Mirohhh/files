@@ -1,10 +1,9 @@
-#!/usr/bin/env node
-// ↑ "shebang" line — tells Unix-like systems to run this file with Node.js directly
-//   so you can do `./build.js` instead of `node build.js` (after chmod +x build.js)
-
-// Node.js built-in modules — no npm install needed
-const fs = require("fs"); // file system: read/write files and directories
-const path = require("path"); // path utilities: safely join/split file paths cross-platform
+#!/usr/bin/env -S deno run --allow-read --allow-write
+// ↑ "shebang" line — tells Unix-like systems to run this file with Deno directly
+//   so you can do `./build.js` instead of `deno run --allow-read --allow-write build.js`
+import { marked } from "npm:marked";
+import markedFootnote from "npm:marked-footnote";
+import { join, basename } from "jsr:@std/path";
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // CONFIG
@@ -657,11 +656,22 @@ ${prismScripts()}
 //   meta — frontmatter key/value pairs (title, date, tags, description)
 //   body — raw markdown text (used for reading time calculation)
 //   html — already-parsed HTML from parseMarkdown()
-function postPage(post) {
+function postPage(post, prev, next) {
   // Build tag pill links for this post (may be empty if no tags)
   const tagLinks = (post.meta.tags || [])
     .map((t) => `<a class="tag" href="/tags/${slugify(t)}.html">#${t}</a>`)
     .join("");
+
+  // prev = older post (higher index), next = newer post (lower index)
+  const postNav = `
+    <nav class="post-nav">
+      <div class="post-nav-prev">
+        ${prev ? `<span class="post-nav-label">← </span><a href="/posts/${prev.slug}.html">${esc(prev.meta.title)}</a>` : ""}
+      </div>
+      <div class="post-nav-next">
+        ${next ? `<span class="post-nav-label"> →</span><a href="/posts/${next.slug}.html">${esc(next.meta.title)}</a>` : ""}
+      </div>
+    </nav>`;
 
   const body = `
     <p><a class="back-link" href="/posts.html">← All posts</a></p>
@@ -678,10 +688,11 @@ function postPage(post) {
       </div>
       <!-- post.html is the fully parsed markdown → HTML content -->
       ${post.html}
-    </article>`;
+    </article>
+    ${postNav}`;
 
   return htmlShell({
-    title: `${post.meta.title}`, // "Post Title — Blog Name"
+    title: `${post.meta.title}`,
     description: post.meta.description || "",
     body,
   });
@@ -736,7 +747,7 @@ function indexPage(posts, work) {
     <div class='recent'>
     <h2>Projects</h2>
     </div>
-    <div>${parseMarkdown(work)}</div>
+    <div>${marked.parse(work)}</div>
     `;
 
   return htmlShell({
@@ -875,33 +886,37 @@ ${posts.map(rssItem).join("\n")}
 //   7. Write feed.xml
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+// ── Configure Markdown Parser ─────────────────────────────────────────────────
+// marked.use() is global, so we only need to call it once.
+marked.use(markedFootnote());
+
 function build() {
   const { postsDir, outputDir } = CONFIG;
 
   // Create output directories if they don't exist yet.
   // { recursive: true } means: create parent directories as needed, and don't
   // error if the directory already exists (idempotent).
-  fs.mkdirSync(outputDir, { recursive: true });
-  fs.mkdirSync(path.join(outputDir, "tags"), { recursive: true });
-  fs.mkdirSync(path.join(outputDir, "posts"), { recursive: true });
+  Deno.mkdirSync(outputDir, { recursive: true });
+  Deno.mkdirSync(join(outputDir, "tags"), { recursive: true });
+  Deno.mkdirSync(join(outputDir, "posts"), { recursive: true });
 
   // ── Step 1: Read and parse all posts ──────────────────────────────────────
   // Get all filenames in posts/, keep only .md files
-  const mdFiles = fs.readdirSync(postsDir).filter((f) => f.endsWith(".md"));
+  const mdFiles = [ ...Deno.readDirSync(postsDir) ].map((e) => e.name).filter((f) => f.endsWith(".md"));
 
   const posts = mdFiles.map((file) => {
     // Read the raw file content as a UTF-8 string
-    const raw = fs.readFileSync(path.join(postsDir, file), "utf8");
+    const raw = Deno.readTextFileSync(join(postsDir, file));
 
     // Split into frontmatter metadata and markdown body
     const { meta, body } = parseFrontmatter(raw);
 
     // The URL slug is the filename without the .md extension.
     // e.g. "hello-world.md" → slug "hello-world" → URL "/hello-world.html"
-    const slug = path.basename(file, ".md");
+    const slug = basename(file, ".md");
 
     // Convert the markdown body to HTML
-    const html = parseMarkdown(body);
+    const html = marked.parse(body);
 
     // Return a post object that all the template functions expect
     return { slug, meta, body, html };
@@ -913,20 +928,24 @@ function build() {
   posts.sort((a, b) => new Date(b.meta.date) - new Date(a.meta.date));
 
   // ── Step 3: Write individual post pages ───────────────────────────────────
-  for (const post of posts) {
-    const dest = path.join(outputDir, "posts", `${post.slug}.html`);
-    fs.writeFileSync(dest, postPage(post));
+  // Posts are sorted newest-first, so posts[i+1] is older (prev) and posts[i-1] is newer (next).
+  for (let i = 0; i < posts.length; i++) {
+    const post = posts[ i ];
+    const prev = posts[ i + 1 ] ?? null; // older post
+    const next = posts[ i - 1 ] ?? null; // newer post
+    const dest = join(outputDir, "posts", `${post.slug}.html`);
+    Deno.writeTextFileSync(dest, postPage(post, prev, next));
     console.log(`  ✓ ${post.slug}.html`);
   }
 
-  fs.writeFileSync(path.join(outputDir, "posts.html"), postsPage(posts));
+  Deno.writeTextFileSync(join(outputDir, "posts.html"), postsPage(posts));
   console.log("  ✓ posts.html");
   // ── Step 4: Write the homepage ────────────────────────────────────────────
-  fs.writeFileSync(
-    path.join(outputDir, "index.html"),
+  Deno.writeTextFileSync(
+    join(outputDir, "index.html"),
     indexPage(
       posts.slice(0, 3),
-      fs.readFileSync(path.join("./work", "work.md"), "utf8"),
+      Deno.readTextFileSync(join("./work", "work.md")),
     ),
   );
   console.log("  ✓ index.html");
@@ -949,8 +968,8 @@ function build() {
 
   // Write one HTML file per unique tag into public/tags/
   for (const [ key, { label, posts: tagged } ] of Object.entries(tagMap)) {
-    const dest = path.join(outputDir, "tags", `${key}.html`);
-    fs.writeFileSync(dest, tagPage(label, tagged));
+    const dest = join(outputDir, "tags", `${key}.html`);
+    Deno.writeTextFileSync(dest, tagPage(label, tagged));
     console.log(`  ✓ tags/${key}.html`);
   }
 
@@ -958,11 +977,11 @@ function build() {
   // style.css lives next to build.js in the project root. We copy it into
   // public/ so it's served alongside the HTML files. This is the only file
   // that needs copying — everything else is generated fresh each build.
-  fs.copyFileSync("./style.css", path.join(outputDir, "style.css"));
+  Deno.copyFileSync("./style.css", join(outputDir, "style.css"));
   console.log("  ✓ style.css");
 
   // ── Step 7: Write the RSS feed ────────────────────────────────────────────
-  fs.writeFileSync(path.join(outputDir, "feed.xml"), rssFeed(posts));
+  Deno.writeTextFileSync(join(outputDir, "feed.xml"), rssFeed(posts));
   console.log("  ✓ feed.xml");
 
   console.log(`\nDone! ${posts.length} post(s) built → ${outputDir}/`);

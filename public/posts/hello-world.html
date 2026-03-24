@@ -32,25 +32,42 @@
       </div>
       <!-- post.html is the fully parsed markdown → HTML content -->
       <p>Every blog starts somewhere. This is mine.</p>
-<p>I've been meaning to start writing for years. Not because I have anything uniquely brilliant to say, but because writing is how I think. And thinking out loud — even to no one — tends to produce better thoughts than thinking quietly.</p>
-<h2 id="what-this-is">What this is</h2>
+<p>I&#39;ve been meaning to start writing for years. Not because I have anything uniquely brilliant to say, but because writing is how I think. And thinking out loud — even to no one — tends to produce better thoughts than thinking quietly.</p>
+<h2>What this is</h2>
 <p>This blog is a place for things I find interesting. Expect posts about:</p>
-<ul><li>Software, tools, and how things are built</li><li>Books I'm reading and ideas I'm chewing on</li><li>Occasional personal updates</li></ul>
+<ul>
+<li>Software, tools, and how things are built</li>
+<li>Books I&#39;m reading and ideas I&#39;m chewing on</li>
+<li>Occasional personal updates</li>
+</ul>
 <p>No particular schedule. No particular audience in mind. Just writing.</p>
-<h2 id="why-build-my-own-blog">Why build my own blog?</h2>
+<h2>Why build my own blog?</h2>
 <p>I could have used Substack, Ghost, or any number of excellent tools. Instead, I wrote a small markdown parser in Node.js and a build script that spits out static HTML.</p>
-<p>Why? Because it's fun, and because I like owning my stack. The whole thing is under 300 lines of code. Here's the bit that converts headings:</p>
+<p>Why? Because it&#39;s fun, and because I like owning my stack. The whole thing is under 300 lines of code. Here&#39;s the bit that converts headings:</p>
 <pre><code class="language-js">const hm = line.match(/^(#{1,6})\s+(.*)/);
 if (hm) {
   const lvl = hm[1].length;
   const txt = inline(hm[2]);
   const id  = slugify(hm[2]);
   out.push(`&lt;h${lvl} id=&quot;${id}&quot;&gt;${txt}&lt;/h${lvl}&gt;`);
-}</code></pre>
+}
+</code></pre>
 <p>Simple, readable, mine.</p>
-<blockquote><p>The best tool is the one you understand completely.</p></blockquote>
+<blockquote>
+<p>The best tool is the one you understand completely.</p>
+</blockquote>
 <p>See you in the next post.</p>
-    </article></main>
+
+    </article>
+    
+    <nav class="post-nav">
+      <div class="post-nav-prev">
+        <span class="post-nav-label">← </span><a href="/posts/test-post.html">Test, test</a>
+      </div>
+      <div class="post-nav-next">
+        <span class="post-nav-label"> →</span><a href="/posts/tagtest.html">Let's test the tags feature!</a>
+      </div>
+    </nav></main>
 <footer>
   <p>© 2026 Omar Shabana ── built with a <a href="https://github.com/mirohhh/markdown-parser">custom markdown parser</a></p>
 </footer>

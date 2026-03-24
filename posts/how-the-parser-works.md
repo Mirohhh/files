@@ -80,7 +80,7 @@ const aligns = separator.map(s => {
 
 ## Footnotes
 
-Footnote definitions (`[^label]: text`) are stripped out in a pre-pass before block parsing, so they don't accidentally render as paragraphs. References (`[^label]`) in the body are replaced with numbered superlinks. At the end of the document, all referenced footnotes are rendered as a numbered list with back-links.[^example]
+Footnote definitions (<code>[^label]: text</code>) are stripped out in a pre-pass before block parsing, so they don't accidentally render as paragraphs. References (<code>[^label]</code>) in the body are replaced with numbered superlinks. At the end of the document, all referenced footnotes are rendered as a numbered list with back-links.[^example]
 
 ## Raw HTML passthrough
 
@@ -121,7 +121,7 @@ Setext H2
 ### Unordered list with nesting
 
 - Apples
-- Bananas
+- Bananas[^banan]
     - Cavendish
     - Plantain
         - Green plantain
@@ -162,7 +162,7 @@ const greet = name => `Hello, ${name}!`;
 console.log(greet('world'));
 ```
 
-### Footnotes
+### Footnote examples
 
 The parser handles footnotes inline[^one] and you can have as many as you like.[^two] They are numbered in the order they appear in the text, not the order they are defined.
 
@@ -176,3 +176,4 @@ This content is written as raw HTML directly in the markdown source. The parser 
 [^example]: Like this one. Click the arrow to jump back.
 [^one]: This is the first footnote. It will appear in the list at the bottom.
 [^two]: And this is the second. Note the numbered superscripts above.
+[^banan]: Bananas are yellow.

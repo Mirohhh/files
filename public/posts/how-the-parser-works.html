@@ -31,83 +31,191 @@
         <div class="tags"><a class="tag" href="/tags/code.html">#code</a><a class="tag" href="/tags/javascript.html">#javascript</a></div>
       </div>
       <!-- post.html is the fully parsed markdown → HTML content -->
-      <p>This blog runs on a custom markdown parser written in Node.js. Let's walk through how it works.</p>
-<h2 id="the-approach">The approach</h2>
+      <p>This blog runs on a custom markdown parser written in Node.js. Let&#39;s walk through how it works.</p>
+<h2>The approach</h2>
 <p>The parser works in two passes. First, a pre-pass strips out footnote definitions and stores them by label. Then the main pass reads the source line by line, decides what kind of block each line starts, collects its content, and emits HTML.</p>
 <p>There are two levels of parsing:</p>
-<ol><li><strong>Block-level</strong> — headings, code fences, lists, tables, blockquotes, paragraphs</li><li><strong>Inline-level</strong> — bold, italic, links, inline code, footnote references, and more</li></ol>
-<h2 id="inline-parsing">Inline parsing</h2>
+<ol>
+<li><strong>Block-level</strong> — headings, code fences, lists, tables, blockquotes, paragraphs</li>
+<li><strong>Inline-level</strong> — bold, italic, links, inline code, footnote references, and more</li>
+</ol>
+<h2>Inline parsing</h2>
 <p>Inline parsing runs on the <em>text content</em> of each block using a chain of regex replacements. Order matters — images must come before links, and bold-italic (<code>***</code>) before bold (<code>**</code>) before italic (<code>*</code>), so longer delimiters are matched first:</p>
 <pre><code class="language-js">function inline(text, ctx) {
   return text
-    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '&lt;img src=&quot;$2&quot; alt=&quot;$1&quot;&gt;')
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, &#39;&lt;img src=&quot;$2&quot; alt=&quot;$1&quot;&gt;&#39;)
     .replace(/\[([^\]]+)\]\(([^)&quot;]+)(?:\s+&quot;([^&quot;]*)&quot;)?\)/g, ...)
-    .replace(/&lt;(https?:\/\/[^&gt;]+)&gt;/g, '&lt;a href=&quot;$1&quot;&gt;$1&lt;/a&gt;')
-    .replace(/\*\*\*(.+?)\*\*\*/g, '&lt;strong&gt;&lt;em&gt;$1&lt;/em&gt;&lt;/strong&gt;')
-    .replace(/\*\*(.+?)\*\*/g,     '&lt;strong&gt;$1&lt;/strong&gt;')
-    .replace(/\*(.+?)\*/g,         '&lt;em&gt;$1&lt;/em&gt;')
-    .replace(/~~(.+?)~~/g,         '&lt;del&gt;$1&lt;/del&gt;')
-    .replace(/`([^`]+)`/g,         '&lt;code&gt;$1&lt;/code&gt;');
-}</code></pre>
+    .replace(/&lt;(https?:\/\/[^&gt;]+)&gt;/g, &#39;&lt;a href=&quot;$1&quot;&gt;$1&lt;/a&gt;&#39;)
+    .replace(/\*\*\*(.+?)\*\*\*/g, &#39;&lt;strong&gt;&lt;em&gt;$1&lt;/em&gt;&lt;/strong&gt;&#39;)
+    .replace(/\*\*(.+?)\*\*/g,     &#39;&lt;strong&gt;$1&lt;/strong&gt;&#39;)
+    .replace(/\*(.+?)\*/g,         &#39;&lt;em&gt;$1&lt;/em&gt;&#39;)
+    .replace(/~~(.+?)~~/g,         &#39;&lt;del&gt;$1&lt;/del&gt;&#39;)
+    .replace(/`([^`]+)`/g,         &#39;&lt;code&gt;$1&lt;/code&gt;&#39;);
+}
+</code></pre>
 <p>The <code>ctx</code> parameter carries footnote state across the document so references can be numbered in the order they appear.</p>
-<h2 id="block-parsing">Block parsing</h2>
+<h2>Block parsing</h2>
 <p>For each line, the parser checks a series of patterns in priority order:</p>
-<ul><li>Starts with <code>&lt;tag</code> → raw HTML passthrough</li><li>Starts with <code> </code>`<code> </code> → fenced code block (collect until closing fence)</li><li>Starts with <code>#</code> → ATX heading</li><li>Next line is <code>===</code> or <code>---</code> → setext heading</li><li>Matches <code>---</code>, <code>***</code>, <code>___</code> → horizontal rule</li><li>Starts with <code>&gt; </code> → blockquote</li><li>Contains <code>|</code> with a separator row next → table</li><li>Starts with <code>- </code>, <code>* </code>, <code>+ </code>, or <code>N.</code> → list (handled recursively for nesting)</li><li>Empty → skip</li><li>Anything else → paragraph</li></ul>
-<h2 id="nested-lists">Nested lists</h2>
+<ul>
+<li>Starts with <code>&lt;tag</code> → raw HTML passthrough</li>
+<li>Starts with <code>```</code> → fenced code block (collect until closing fence)</li>
+<li>Starts with <code>#</code> → ATX heading</li>
+<li>Next line is <code>===</code> or <code>---</code> → setext heading</li>
+<li>Matches <code>---</code>, <code>***</code>, <code>___</code> → horizontal rule</li>
+<li>Starts with <code>&gt; </code> → blockquote</li>
+<li>Contains <code>|</code> with a separator row next → table</li>
+<li>Starts with <code>- </code>, <code>* </code>, <code>+ </code>, or <code>N.</code> → list (handled recursively for nesting)</li>
+<li>Empty → skip</li>
+<li>Anything else → paragraph</li>
+</ul>
+<h2>Nested lists</h2>
 <p>Lists are handled by a separate recursive function <code>renderList()</code>. When it encounters lines indented deeper than the current level, it recurses to build a child <code>&lt;ul&gt;</code> or <code>&lt;ol&gt;</code>. This supports arbitrary nesting depth:</p>
 <pre><code class="language-js">function renderList(listLines, indent, ctx) {
   // collect items at this indent level
   // when sub-lines are found, recurse:
   const subIndent = subLines[0].match(/^(\s*)/)[1].length;
   nested = renderList(subLines, subIndent, ctx);
-}</code></pre>
+}
+</code></pre>
 <p>Task list items (<code>- [ ]</code> / <code>- [x]</code>) are detected inside the list renderer and rendered as disabled checkboxes.</p>
-<h2 id="tables">Tables</h2>
+<h2>Tables</h2>
 <p>GFM pipe tables are parsed by <code>renderTable()</code>. The separator row drives column alignment — colons on either side mean center, colon on the right means right-aligned:</p>
 <pre><code class="language-js">const aligns = separator.map(s =&gt; {
-  if (/^:-+:$/.test(s)) return ' style=&quot;text-align:center&quot;';
-  if (/^-+:$/.test(s))  return ' style=&quot;text-align:right&quot;';
-  return '';
-});</code></pre>
-<h2 id="footnotes">Footnotes</h2>
-<p>Footnote definitions (<code><sup><a href="#fn-label" id="fnref-label">1</a></sup>: text</code>) are stripped out in a pre-pass before block parsing, so they don't accidentally render as paragraphs. References (<code><sup><a href="#fn-label" id="fnref-label">1</a></sup></code>) in the body are replaced with numbered superlinks. At the end of the document, all referenced footnotes are rendered as a numbered list with back-links.<sup><a href="#fn-example" id="fnref-example">2</a></sup></p>
-<h2 id="raw-html-passthrough">Raw HTML passthrough</h2>
-<p>Any line starting with an HTML tag is passed through verbatim without escaping. This lets you drop <code>&lt;video&gt;</code>, <code>&lt;details&gt;</code>, <code>&lt;figure&gt;</code>, or any custom element directly into a post when markdown isn't enough.</p>
+  if (/^:-+:$/.test(s)) return &#39; style=&quot;text-align:center&quot;&#39;;
+  if (/^-+:$/.test(s))  return &#39; style=&quot;text-align:right&quot;&#39;;
+  return &#39;&#39;;
+});
+</code></pre>
+<h2>Footnotes</h2>
+<p>Footnote definitions (<code>[^label]: text</code>) are stripped out in a pre-pass before block parsing, so they don&#39;t accidentally render as paragraphs. References (<code>[^label]</code>) in the body are replaced with numbered superlinks. At the end of the document, all referenced footnotes are rendered as a numbered list with back-links.<sup><a id="footnote-ref-example" href="#footnote-example" data-footnote-ref aria-describedby="footnote-label">1</a></sup></p>
+<h2>Raw HTML passthrough</h2>
+<p>Any line starting with an HTML tag is passed through verbatim without escaping. This lets you drop <code>&lt;video&gt;</code>, <code>&lt;details&gt;</code>, <code>&lt;figure&gt;</code>, or any custom element directly into a post when markdown isn&#39;t enough.</p>
 <hr>
 <p>The full source is in <code>build.js</code>. The parser, including all features, comes in under 200 lines.</p>
 <hr>
-<h2 id="live-examples">Live examples</h2>
+<h2>Live examples</h2>
 <p>Everything below is a live test of each feature.</p>
-<h3 id="inline-formatting">Inline formatting</h3>
-<p><strong>bold</strong>, <em>italic</em>, <strong><em>bold and italic</em></strong>, <del>strikethrough</del>, <code>inline code</code></p>
+<h3>Inline formatting</h3>
+<p><strong>bold</strong>, <em>italic</em>, <em><strong>bold and italic</strong></em>, <del>strikethrough</del>, <code>inline code</code></p>
 <p>A <a href="https://example.com">regular link</a> and a <a href="https://example.com" title="I am the title, hover me">link with a title</a>.</p>
 <p>Auto-links: <a href="https://example.com">https://example.com</a> and an email address <a href="mailto:hello@example.com">hello@example.com</a>.</p>
-<h3 id="headings-setext-style">Headings (setext style)</h3>
-<h1 id="setext-h1">Setext H1</h1>
-<h2 id="setext-h2">Setext H2</h2>
-<h3 id="blockquote">Blockquote</h3>
-<blockquote><p>This is a blockquote.<br>It can span multiple lines<br>and they all merge into one block.</p></blockquote>
-<h3 id="unordered-list-with-nesting">Unordered list with nesting</h3>
-<ul><li>Apples</li><li>Bananas<ul><li>Cavendish</li><li>Plantain<ul><li>Green plantain</li><li>Ripe plantain</li></ul></li></ul></li><li>Cherries</li></ul>
-<h3 id="ordered-list-with-nesting">Ordered list with nesting</h3>
-<ol><li>First</li><li>Second<ol><li>Sub-item A</li><li>Sub-item B</li></ol></li><li>Third</li></ol>
-<h3 id="task-list">Task list</h3>
-<ul><li><input type="checkbox" disabled checked> Build the markdown parser</li><li><input type="checkbox" disabled checked> Add nested list support</li><li><input type="checkbox" disabled checked> Add table support</li><li><input type="checkbox" disabled checked> Add footnote support</li><li><input type="checkbox" disabled> World domination</li></ul>
-<h3 id="table">Table</h3>
-<table><thead><tr><th>Feature</th><th style="text-align:center">Supported</th><th style="text-align:right">Notes</th></tr></thead><tbody><tr><td>Bold / italic</td><td style="text-align:center">✓</td><td style="text-align:right"><code>**bold**</code>, <code>*italic*</code></td></tr><tr><td>Nested lists</td><td style="text-align:center">✓</td><td style="text-align:right">Arbitrary depth</td></tr><tr><td>Tables</td><td style="text-align:center">✓</td><td style="text-align:right">Left, center, right align</td></tr><tr><td>Footnotes</td><td style="text-align:center">✓</td><td style="text-align:right">Auto-numbered, with backlink</td></tr><tr><td>HTML passthrough</td><td style="text-align:center">✓</td><td style="text-align:right">Any tag at line start</td></tr></tbody></table>
-<h3 id="code-block">Code block</h3>
+<h3>Headings (setext style)</h3>
+<h1>Setext H1</h1>
+<h2>Setext H2</h2>
+<h3>Blockquote</h3>
+<blockquote>
+<p>This is a blockquote.
+It can span multiple lines
+and they all merge into one block.</p>
+</blockquote>
+<h3>Unordered list with nesting</h3>
+<ul>
+<li>Apples</li>
+<li>Bananas<sup><a id="footnote-ref-banan" href="#footnote-banan" data-footnote-ref aria-describedby="footnote-label">2</a></sup><ul>
+<li>Cavendish</li>
+<li>Plantain<ul>
+<li>Green plantain</li>
+<li>Ripe plantain</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Cherries</li>
+</ul>
+<h3>Ordered list with nesting</h3>
+<ol>
+<li>First</li>
+<li>Second<ol>
+<li>Sub-item A</li>
+<li>Sub-item B</li>
+</ol>
+</li>
+<li>Third</li>
+</ol>
+<h3>Task list</h3>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> Build the markdown parser</li>
+<li><input checked="" disabled="" type="checkbox"> Add nested list support</li>
+<li><input checked="" disabled="" type="checkbox"> Add table support</li>
+<li><input checked="" disabled="" type="checkbox"> Add footnote support</li>
+<li><input disabled="" type="checkbox"> World domination</li>
+</ul>
+<h3>Table</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th align="center">Supported</th>
+<th align="right">Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Bold / italic</td>
+<td align="center">✓</td>
+<td align="right"><code>**bold**</code>, <code>*italic*</code></td>
+</tr>
+<tr>
+<td>Nested lists</td>
+<td align="center">✓</td>
+<td align="right">Arbitrary depth</td>
+</tr>
+<tr>
+<td>Tables</td>
+<td align="center">✓</td>
+<td align="right">Left, center, right align</td>
+</tr>
+<tr>
+<td>Footnotes</td>
+<td align="center">✓</td>
+<td align="right">Auto-numbered, with backlink</td>
+</tr>
+<tr>
+<td>HTML passthrough</td>
+<td align="center">✓</td>
+<td align="right">Any tag at line start</td>
+</tr>
+</tbody></table>
+<h3>Code block</h3>
 <pre><code class="language-js">// A fenced code block with syntax highlighting via Prism.js
 const greet = name =&gt; `Hello, ${name}!`;
-console.log(greet('world'));</code></pre>
-<h3 id="footnotes">Footnotes</h3>
-<p>The parser handles footnotes inline<sup><a href="#fn-one" id="fnref-one">3</a></sup> and you can have as many as you like.<sup><a href="#fn-two" id="fnref-two">4</a></sup> They are numbered in the order they appear in the text, not the order they are defined.</p>
-<h3 id="raw-html-passthrough">Raw HTML passthrough</h3>
+console.log(greet(&#39;world&#39;));
+</code></pre>
+<h3>Footnote examples</h3>
+<p>The parser handles footnotes inline<sup><a id="footnote-ref-one" href="#footnote-one" data-footnote-ref aria-describedby="footnote-label">3</a></sup> and you can have as many as you like.<sup><a id="footnote-ref-two" href="#footnote-two" data-footnote-ref aria-describedby="footnote-label">4</a></sup> They are numbered in the order they appear in the text, not the order they are defined.</p>
+<h3>Raw HTML passthrough</h3>
 <details>
 <summary>Click to expand — this is a native HTML details element</summary>
 This content is written as raw HTML directly in the markdown source. The parser passes it through untouched. Useful for accordions, videos, figures, or anything markdown can't express.
 </details>
-<section class="footnotes"><hr><ol><li id="fn-example">Like this one. Click the arrow to jump back. <a href="#fnref-example" aria-label="Back to content">↩</a></li><li id="fn-one">This is the first footnote. It will appear in the list at the bottom. <a href="#fnref-one" aria-label="Back to content">↩</a></li><li id="fn-two">And this is the second. Note the numbered superscripts above. <a href="#fnref-two" aria-label="Back to content">↩</a></li></ol></section>
-    </article></main>
+
+<section class="footnotes" data-footnotes>
+<h2 id="footnote-label" class="sr-only">Footnotes</h2>
+<ol>
+<li id="footnote-example">
+<p>Like this one. Click the arrow to jump back. <a href="#footnote-ref-example" data-footnote-backref aria-label="Back to reference example">↩</a></p>
+</li>
+<li id="footnote-banan">
+<p>Bananas are yellow. <a href="#footnote-ref-banan" data-footnote-backref aria-label="Back to reference banan">↩</a></p>
+</li>
+<li id="footnote-one">
+<p>This is the first footnote. It will appear in the list at the bottom. <a href="#footnote-ref-one" data-footnote-backref aria-label="Back to reference one">↩</a></p>
+</li>
+<li id="footnote-two">
+<p>And this is the second. Note the numbered superscripts above. <a href="#footnote-ref-two" data-footnote-backref aria-label="Back to reference two">↩</a></p>
+</li>
+</ol>
+</section>
+
+    </article>
+    
+    <nav class="post-nav">
+      <div class="post-nav-prev">
+        
+      </div>
+      <div class="post-nav-next">
+        <span class="post-nav-label"> →</span><a href="/posts/test4.html">Test, test</a>
+      </div>
+    </nav></main>
 <footer>
   <p>© 2026 Omar Shabana ── built with a <a href="https://github.com/mirohhh/markdown-parser">custom markdown parser</a></p>
 </footer>
