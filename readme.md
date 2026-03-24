@@ -13,5 +13,6 @@ that wraps the html files in an html shell
 - [x] underline links
 - [x] (post) move date and read-time above the post title
 - [x] (post) move tags div under the post title
-- [ ] (home) make projects a list
-- [x] (all) remove tags background 
+- [x] (home) make projects a list
+- [x] (all) remove tags background
+- [x] add bottom post navigation
