@@ -570,6 +570,40 @@ function parseMarkdown(md) {
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// TABLE OF CONTENTS
+//
+// Scans the raw markdown body for ATX headings (## through ####) and builds
+// a nested <nav class="toc"> block. Only rendered when 2+ headings exist.
+// Anchor IDs match the slugify() IDs assigned by parseMarkdown().
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+function buildToc(md) {
+  const headings = [];
+  for (const line of md.split("\n")) {
+    const m = line.match(/^(#{2,4})\s+(.*)/);
+    if (m) headings.push({ level: m[ 1 ].length, text: m[ 2 ] });
+  }
+  if (headings.length < 2) return ""; // skip TOC for very short posts
+
+  const items = headings
+    .map(({ level, text }) => {
+      const indent = "  ".repeat(level - 2); // h2=0, h3=2, h4=4 spaces
+      const id = slugify(text);
+      // Strip any inline markdown (bold, italic, code) from the display text
+      const display = text.replace(/`([^`]+)`/g, "$1").replace(/(\*{1,3}|_{1,3})(.+?)\1/g, "$2");
+      return `${indent}<li class="toc-h${level}"><a href="#${id}">${esc(display)}</a></li>`;
+    })
+    .join("\n");
+
+  return `<details class="toc">
+  <summary>Table of Content</summary>
+  <ul>
+${items}
+  </ul>
+</details>`;
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // CSS
 //
 // Styles live in style.css (next to this file) and are copied into public/
@@ -686,6 +720,8 @@ function postPage(post, prev, next) {
         <!-- only render the tags section if this post has tags -->
         ${tagLinks ? `<div class="tags">${tagLinks}</div>` : ""}
       </div>
+      <!-- table of contents (auto-generated from headings) -->
+      ${buildToc(post.body)}
       <!-- post.html is the fully parsed markdown → HTML content -->
       ${post.html}
     </article>
@@ -889,6 +925,20 @@ ${posts.map(rssItem).join("\n")}
 // ── Configure Markdown Parser ─────────────────────────────────────────────────
 // marked.use() is global, so we only need to call it once.
 marked.use(markedFootnote());
+
+// Custom renderer: add id="..." to every heading so TOC anchor links work.
+// The id is generated with the same slugify() used by buildToc(), guaranteeing
+// that href="#foo" in the TOC matches id="foo" on the actual heading element.
+marked.use({
+  renderer: {
+    heading({ text, depth }) {
+      // `text` may contain HTML (e.g. <code>), strip tags for the slug
+      const plain = text.replace(/<[^>]+>/g, "");
+      const id = slugify(plain);
+      return `<h${depth} id="${id}">${text}</h${depth}>\n`;
+    },
+  },
+});
 
 function build() {
   const { postsDir, outputDir } = CONFIG;
