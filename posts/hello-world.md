@@ -5,6 +5,8 @@ description: The first post on this blog — why I'm writing and what to expect.
 tags: [meta, writing]
 ---
 
+![Hello Hero](/assets/hello.jpg)
+
 Every blog starts somewhere. This is mine.
 
 I've been meaning to start writing for years. Not because I have anything uniquely brilliant to say, but because writing is how I think. And thinking out loud — even to no one — tends to produce better thoughts than thinking quietly.

@@ -159,9 +159,10 @@ footer > p {
 }
 a {
     color: var(--accent);
+    text-decoration: none;
 }
 a:hover {
-    text-decoration: none;
+    text-decoration: underline;
 } /* underline on default, remove on hover = subtle inversion */
 strong {
     font-weight: 600;
@@ -195,13 +196,15 @@ blockquote {
 }
 
 /* ── Code blocks ── */
-:not(pre) > code[class*="language-"], pre[class*="language-"] {
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
     background: var(--code-bg);
 }
 
 pre {
     background: var(--code-bg);
     padding: 1.25rem 1.5rem;
+    border-radius: 6px;
     overflow-x: auto; /* horizontal scroll for long lines instead of wrapping */
     margin: 1.5rem 0;
     font-size: 0.875rem; /* slightly smaller than body text */
@@ -415,9 +418,11 @@ code {
     /* margin-bottom: 0.6rem; */
     list-style: none; /* hide default arrow in Firefox */
 }
-.toc summary::-webkit-details-marker { display: none; } /* hide arrow in Chrome/Safari */
+.toc summary::-webkit-details-marker {
+    display: none;
+} /* hide arrow in Chrome/Safari */
 .toc summary::before {
-    content: '▶ ';
+    content: "▶ ";
     font-size: 0.8rem;
     transition: transform 0.15s;
     display: inline-block;
@@ -429,10 +434,10 @@ code {
 .toc ul {
     margin: 0;
     padding-left: 1.4rem;
-    padding-top: 1rem;
-    margin-top: 0.4rem;
-    margin-bottom: 0.4rem;
-    border-top: 2px solid var(--border);
+    padding-top: 0.4rem;
+    /*margin-top: 0.4rem;
+    margin-bottom: 0.4rem;*/
+    /*border-top: 2px solid var(--border);*/
 }
 .toc li {
     margin: 0.2rem 0;
@@ -440,8 +445,12 @@ code {
     line-height: 1.5;
 }
 /* indent h3 and h4 entries — margin-left moves the marker too */
-.toc li.toc-h3 { margin-left: 1rem; }
-.toc li.toc-h4 { margin-left: 2rem; }
+.toc li.toc-h3 {
+    margin-left: 1rem;
+}
+.toc li.toc-h4 {
+    margin-left: 2rem;
+}
 .toc a {
     color: var(--fg);
     text-decoration: none;
@@ -449,4 +458,22 @@ code {
 .toc a:hover {
     color: var(--accent);
     text-decoration: underline;
+}
+
+[data-footnote-ref]::before {
+    content: "[";
+}
+
+[data-footnote-ref]::after {
+    content: "]";
+}
+
+h2 > a {
+    font-size: 2rem;
+}
+
+h1.posts {
+    margin-bottom: 0;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
 }
