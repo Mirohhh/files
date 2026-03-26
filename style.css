@@ -114,7 +114,7 @@ footer {
     color: var(--muted);
     font-size: 0.85rem;
     font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    margin-top: 5rem;
+    margin-top: 6rem;
 }
 div.recent {
     display: flex;
@@ -193,6 +193,52 @@ blockquote {
     color: var(--muted);
     margin: 1.5rem 0;
     font-style: italic;
+}
+
+/* ── Tables ── */
+/*table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+}*/
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 1rem 0;
+}
+/* Top-left corner */
+tr:first-child th:first-child {
+    border-top-left-radius: 10px;
+}
+/* Top-right corner */
+tr:first-child th:last-child {
+    border-top-right-radius: 10px;
+}
+/* Bottom-left corner */
+tr:last-child td:first-child {
+    border-bottom-left-radius: 10px;
+}
+/* Bottom-right corner */
+tr:last-child td:last-child {
+    border-bottom-right-radius: 10px;
+}
+
+th,
+td {
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    text-align: left;
+}
+th {
+    background-color: var(--code-bg);
+    font-weight: 600;
+}
+
+article h2 {
+    margin: 2.6rem 0 1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--border);
 }
 
 /* ── Code blocks ── */

@@ -49,13 +49,43 @@ const esc = (s) =>
     .replace(/"/g, "&quot;");
 
 // Convert a date string (e.g. "2026-03-19") into a human-readable format.
+
 // toLocaleDateString with 'en-US' and these options produces e.g. "March 19, 2026".
+
 function formatDate(str) {
   return new Date(str).toLocaleDateString("en-US", {
     year: "numeric",
+
     month: "long",
+
     day: "numeric",
   });
+}
+
+// Minify HTML by removing unnecessary whitespace, line breaks, and comments.
+// This reduces file size without affecting rendering.
+// Strategy:
+//   - Remove HTML comments (except IE conditional comments)
+
+//   - Collapse multiple whitespace characters into single spaces
+
+//   - Remove whitespace between block-level tags and inline tags
+//   - Trim leading/trailing whitespace
+function minifyHtml(html) {
+  return (
+    html
+
+      // Remove HTML comments (but not IE conditional comments)
+
+      .replace(/<!--(?!\[if).*?-->/g, "")
+      // Collapse multiple whitespace (including newlines) into single space
+      .replace(/\s+/g, " ")
+      // Remove space between block elements (e.g., </div><div>)
+      .replace(/>\s+</g, "><")
+      // Remove leading/trailing whitespace
+
+      .trim()
+  );
 }
 
 // Convert a date string to ISO 8601 format (e.g. "2026-03-19T00:00:00.000Z").
@@ -142,8 +172,7 @@ function parseFrontmatter(raw) {
       val = val
         .replace(/^\[|\]$/g, "") // remove [ and ]
         .split(",") // split into individual tags
-        .map((t) => t.trim()) // trim whitespace from each
-        .filter(Boolean); // discard empty values
+        .map((t) => t.trim()); // trim whitespace from each // discard empty values
     }
 
     meta[key] = val;
@@ -151,6 +180,24 @@ function parseFrontmatter(raw) {
 
   // match[2] is everything after the closing "---" — the actual post content.
   return { meta, body: match[2] };
+}
+
+// Validate frontmatter has required fields.
+// Throws an error if title or date is missing.
+function validateFrontmatter(meta, filename) {
+  const errors = [];
+  if (!meta.title) errors.push("missing 'title'");
+  if (!meta.date) errors.push("missing 'date'");
+
+  if (errors.length > 0) {
+    throw new Error(`${filename}: ${errors.join(", ")}`);
+  }
+
+  // Validate date format
+  const date = new Date(meta.date);
+  if (isNaN(date.getTime())) {
+    throw new Error(`${filename}: invalid date format '${meta.date}'`);
+  }
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -339,7 +386,6 @@ function parseMarkdown(md) {
     }
     return true;
   });
-
   // footnoteOrder tracks which labels are referenced, in first-appearance order,
   // so we can number them consistently across the document.
   const footnoteOrder = [];
@@ -911,8 +957,35 @@ ${posts.map(rssItem).join("\n")}
 </rss>`;
 }
 
+// Generate XML sitemap for SEO
+function sitemap(posts) {
+  const pages = [
+    { loc: "/", changefreq: "weekly", priority: 1.0 },
+    { loc: "/posts.html", changefreq: "weekly", priority: 0.8 },
+    ...posts.map((p) => ({
+      loc: `/posts/${p.slug}.html`,
+      changefreq: "monthly",
+      priority: 0.6,
+      lastmod: p.meta.date,
+    })),
+  ];
+
+  let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+  xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+  for (const p of pages) {
+    xml += `  <url>\n    <loc>${CONFIG.siteUrl}${p.loc}</loc>\n    <changefreq>${p.changefreq}</changefreq>\n    <priority>${p.priority}</priority>\n`;
+    if (p.lastmod) xml += `    <lastmod>${p.lastmod}</lastmod>\n`;
+    xml += `  </url>\n`;
+  }
+  xml += "</urlset>";
+
+  return xml;
+}
+
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 // BUILD
+
 //
 // The main entry point. Orchestrates the entire pipeline:
 //   1. Create output directories
@@ -960,23 +1033,30 @@ function build() {
     .filter((f) => f.endsWith(".md"));
 
   const posts = mdFiles.map((file) => {
-    // Read the raw file content as a UTF-8 string
-    const raw = Deno.readTextFileSync(join(postsDir, file));
+    try {
+      // Read the raw file content as a UTF-8 string
+      const raw = Deno.readTextFileSync(join(postsDir, file));
 
-    // Split into frontmatter metadata and markdown body
-    const { meta, body } = parseFrontmatter(raw);
+      // Split into frontmatter metadata and markdown body
+      const { meta, body } = parseFrontmatter(raw);
 
-    // The URL slug is the filename without the .md extension.
-    // e.g. "hello-world.md" → slug "hello-world" → URL "/hello-world.html"
-    const slug = basename(file, ".md");
+      // Validate frontmatter has required fields
+      validateFrontmatter(meta, file);
 
-    // Convert the markdown body to HTML
-    const html = marked.parse(body);
+      // The URL slug is the filename without the .md extension.
+      // e.g. "hello-world.md" → slug "hello-world" → URL "/hello-world.html"
+      const slug = basename(file, ".md");
 
-    // Return a post object that all the template functions expect
-    return { slug, meta, body, html };
+      // Convert the markdown body to HTML
+      const html = marked.parse(body);
+
+      // Return a post object that all the template functions expect
+      return { slug, meta, body, html };
+    } catch (e) {
+      console.error(`  ✗ Error parsing ${file}: ${e.message}`);
+      return null;
+    }
   });
-
   // ── Step 2: Sort newest-first ─────────────────────────────────────────────
   // Subtracting two Date objects coerces them to milliseconds since epoch,
   // so (b - a) gives descending order (newest first).
@@ -1053,6 +1133,32 @@ function build() {
   // ── Step 7: Write the RSS feed ────────────────────────────────────────────
   Deno.writeTextFileSync(join(outputDir, "feed.xml"), rssFeed(posts));
   console.log("  ✓ feed.xml");
+
+  Deno.writeTextFileSync(join(outputDir, "feed.xml"), rssFeed(posts));
+  console.log("  ✓ feed.xml");
+
+  // ── Step 8: Write the sitemap ────────────────────────────────────────────
+  Deno.writeTextFileSync(join(outputDir, "sitemap.xml"), sitemap(posts));
+
+  console.log("  ✓ sitemap.xml");
+
+  // ── Step 9: Minify HTML files ─────────────────────────────────────────────
+  const htmlFiles = [
+    join(outputDir, "index.html"),
+
+    join(outputDir, "posts.html"),
+    ...posts.map((p) => join(outputDir, "posts", `${p.slug}.html`)),
+    ...Object.values(tagMap).map((t) =>
+      join(outputDir, "tags", `${slugify(t.label)}.html`),
+    ),
+  ];
+
+  for (const file of htmlFiles) {
+    const content = Deno.readTextFileSync(file);
+    const minified = minifyHtml(content);
+    Deno.writeTextFileSync(file, minified);
+    console.log(`  ✓ ${basename(file)} (minified)`);
+  }
 
   console.log(`\nDone! ${posts.length} post(s) built → ${outputDir}/`);
 }

@@ -11,8 +11,6 @@ For a long time, the dominant narrative in Artificial Intelligence was that bigg
 
 > "The true measure of intelligence is not the size of the brain, but how effectively it can be applied to the task at hand." — *Modern AI Proverb*
 
-***
-
 ## LLM vs. SLM: A Quick Comparison
 
 While Large Language Models (LLMs) grab the headlines, SLMs are quietly winning on the practical front for many developers.
@@ -24,8 +22,6 @@ While Large Language Models (LLMs) grab the headlines, SLMs are quietly winning 
 | **Latency** | High (API Roundtrip) | Ultra-low (Local execution) |
 | **Cost** | High (Pay-per-token) | Low (Fixed or User-compute) |
 | **Privacy** | Shared with provider | Private (On-device) |
-
-***
 
 ## Why the Shift?
 
@@ -65,8 +61,6 @@ async function main() {
 }
 ```
 
-***
-
 ## The Future is Selective
 
 We are moving away from the "one-model-fits-all" approach. The future of AI integration in web apps will likely be **selective intelligence**:
@@ -74,8 +68,6 @@ We are moving away from the "one-model-fits-all" approach. The future of AI inte
 2. **Small AI** for 90% of routine tasks.
 
 Small Language Models might be small in parameter count, but their impact on the web ecosystem is going to be massive.
-
-***
 
 [^1]: This is crucial for HIPAA or GDPR compliant applications where data transfer is a liability.
 [^2]: WebGPU is a modern graphics and compute API for the web, providing much better performance than WebGL.
